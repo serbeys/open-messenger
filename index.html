@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        
+        .phone-input {
+            width: 80%;
+            margin-bottom: 10px;
+        }
+        
+        .phone-input-mobile {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        
+        .phone-number {
+            margin-bottom: 10px;
+        }
+        
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var phoneInput = document.getElementById("phone-input");
+            var phoneNumber = document.getElementById("phone-number");
+            var telegramButton = document.getElementById("telegram-button");
+            var whatsappButton = document.getElementById("whatsapp-button");
+
+            // Проверка буфера обмена и автоматическое заполнение поля ввода
+            if (navigator.clipboard && navigator.clipboard.readText) {
+                navigator.clipboard.readText().then(function(text) {
+                    if (isValidPhoneNumber(text)) {
+                        phoneInput.value = text;
+                    }
+                });
+            }
+
+            // Обработка ввода номера телефона
+            phoneInput.addEventListener("input", function() {
+                var input = phoneInput.value;
+                var processedNumber = processPhoneNumber(input);
+                phoneNumber.textContent = processedNumber;
+
+                // Показать кнопки только если номер валиден
+                if (isValidPhoneNumber(processedNumber)) {
+                    telegramButton.href = "https://t.me/" + processedNumber;
+                    whatsappButton.href = "https://wa.me/" + processedNumber;
+                    telegramButton.style.display = "inline-block";
+                    whatsappButton.style.display = "inline-block";
+                } else {
+                    telegramButton.style.display = "none";
+                    whatsappButton.style.display = "none";
+                }
+            });
+
+            function processPhoneNumber(phoneNumber) {
+                // Удаление ненужных символов и преобразование в номер вида +79043202898
+                var processedNumber = phoneNumber.replace(/\D/g, "");
+                if (processedNumber.charAt(0) !== "+") {
+                    processedNumber = "+" + processedNumber;
+                }
+                return processedNumber;
+            }
+
+            function isValidPhoneNumber(phoneNumber) {
+                // Проверка валидности номера
+                return /^\+\d{11}$/.test(phoneNumber);
+            }
+        });
+    </script>
+</head>
+<body>
+    <input type="text" id="phone-input" class="phone-input" placeholder="Enter phone number">
+    <p id="phone-number" class="phone-number"></p>
+    <div class="buttons">
+        <a href="#" id="telegram-button" class="button" style="display: none">Telegram</a>
+        <a href="#" id="whatsapp-button" class="button" style="display: none">WhatsApp</a>
+    </div>
+
+    <script>
+        // Проверка мобильного устройства и применение стилей для мобильных браузеров
+        var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        if (isMobile) {
+            var phoneInput = document.getElementById("phone-input");
+            phoneInput.classList.remove("phone-input");
+            phoneInput.classList.add("phone-input-mobile");
+            phoneInput.style.width = "100%";
+
+            var phoneNumber = document.getElementById("phone-number");
+            phoneNumber.style.width = "100%";
+
+            var buttons = document.getElementsByClassName("buttons")[0];
+            buttons.style.display = "block";
+            buttons.style.width = "100%";
+
+            var telegramButton = document.getElementById("telegram-button");
+            telegramButton.style.width = "48%";
+
+            var whatsappButton = document.getElementById("whatsapp-button");
+            whatsappButton.style.width = "48%";
+        }
+    </script>
+</body>
+</html>
